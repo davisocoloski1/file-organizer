@@ -90,6 +90,6 @@ Finally, you can click the "Organize Files" button, which will locate the files 
 - 1 &rarr; If you haven't selected a source or destination directory, a warning message box will appear. The same will happen if one of the directories doesn't exist.
 - 2 &rarr; If everything is correct, the progress bar will begin to advance. Once the transfer is complete, the application will display an information message box, notifying you that it is complete.
 
-### Note: the application may crash at times after clicking "Organize Files," so I recommend not clicking on the window until the transfer is complete.
-
 ![Organize Files Screenshot](assets/organize_files.png)
+
+### Note: the application may crash at times after clicking "Organize Files," so I recommend not clicking on the window until the transfer is complete.
