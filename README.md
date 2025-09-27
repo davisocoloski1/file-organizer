@@ -93,3 +93,5 @@ Finally, you can click the "Organize Files" button, which will locate the files 
 ![Organize Files Screenshot](assets/organize_files.png)
 
 ### Note: the application may crash at times after clicking "Organize Files," so I recommend not clicking on the window until the transfer is complete.
+
+Possible improvement: let the user select which types of files to organize using checkboxes
