@@ -1,6 +1,6 @@
 import os, shutil, pyperclip
 import time, threading
-from tkinter import messagebox, filedialog, END
+from tkinter import messagebox, filedialog, END, IntVar
 
 class App:
     def copy_path(self, path):
@@ -8,12 +8,25 @@ class App:
 
     def check_dir_exists(self, dir):
         if os.path.exists(dir):
-            return True
+            override = messagebox.askyesnocancel("Override files", f"Path {dir} already exists, do you want to override it?")
+            if override:
+                return True
+            if override is False:
+                return False
+            else:
+                return None
         else:
             os.makedirs(dir, exist_ok=True)
             return True
 
-    def organize_files(self, origin, destiny, root, progress):
+    def checkboxes_state(self, var1, var2, dir):
+        if var1 == 1:
+            return True
+
+        if var2 == 1:
+            return self.check_dir_exists(dir)
+
+    def organize_files(self, origin, destiny, root, progress, var1, var2):
         no_permission_files = []
         try:
             directory = os.path.expanduser(origin)
@@ -34,15 +47,24 @@ class App:
                 messagebox.showwarning("Invalid destination.", "Your destination directory is empty.")
                 return
 
+            valid_dirs = {}
+            for destiny_name in destinies:
+                final = os.path.join(destiny, destiny_name)
+                state = self.checkboxes_state(var1.get(), var2.get(), final)
+
+                if state:
+                    valid_dirs[destiny_name] = True
+                else:
+                    valid_dirs[destiny_name] = False
+
             for i, file in enumerate(files, start=1):
                 path = os.path.join(directory, file)
 
                 for destiny_name, extensions in zip(destinies, file_types):
                     if file.endswith(tuple(extensions)):
-                        final = os.path.join(destiny, destiny_name)
-                        if self.check_dir_exists(final):
+                        if valid_dirs.get(destiny_name):
                             try:
-                                shutil.copy2(path, final)
+                                shutil.copy2(path, os.path.join(destiny, destiny_name))
                             except PermissionError:
                                 no_permission_files.append(path)
                         break
@@ -58,6 +80,7 @@ class App:
         messagebox.showwarning("PermissionError", f"No permission to copy the following files: {error_files}")
         time.sleep(3)
         progress["value"] = 0
+        messagebox.showinfo("Sucess", "Transfer succesfully completed.")
 
     def open_file_dialog(self, input_dir=None, label=None):
         if input_dir is None:
@@ -73,5 +96,5 @@ class App:
             input_dir.insert(0, folder)
 
     def start_organize(self, origin, destiny):
-        t = threading.Thread(target=self.organize_files, args=(origin, destiny))
+        t = threading.Thread(target=self.organize_files, args=(origin, destiny), daemon=True)
         t.start()

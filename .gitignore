@@ -16,3 +16,7 @@ env/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Others
+/assets
+test.py
