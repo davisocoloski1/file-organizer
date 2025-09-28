@@ -3,8 +3,25 @@ import time, threading
 from tkinter import messagebox, filedialog, END, IntVar
 
 class App:
-    def copy_path(self, path):
-        pyperclip.copy(path)
+    def show_hide_error(self, label, msg, type):
+        if type == "show":
+            if label:
+                label["text"] = msg
+                label.grid()
+
+        elif type == "hide":
+            if label:
+                label["text"] = ""
+                label.grid_remove()
+
+    def copy_path(self, path, error_label):
+        if len(path) == 0:
+            error_label["text"] = "Nothing to copy"
+            error_label.grid()
+        else:
+            pyperclip.copy(path)
+            error_label["text"] = ""
+            error_label.grid_remove()
 
     def check_dir_exists(self, dir):
         if os.path.exists(dir):
@@ -26,7 +43,10 @@ class App:
         if var2 == 1:
             return self.check_dir_exists(dir)
 
-    def organize_files(self, origin, destiny, root, progress, var1, var2):
+    def organize_files(self, origin, destiny, root, progress, var1, var2, **kwargs):
+        self.show_hide_error(kwargs.get("origin_error"), "", "hide")
+        self.show_hide_error(kwargs.get("destiny_error"), "", "hide")
+
         no_permission_files = []
         try:
             directory = os.path.expanduser(origin)
@@ -44,7 +64,7 @@ class App:
             total = len(files)
 
             if len(destiny.strip()) == 0:
-                messagebox.showwarning("Invalid destination.", "Your destination directory is empty.")
+                self.show_hide_error(kwargs.get("destiny_error"), "Diretory not found or non-existent", "show")
                 return
 
             valid_dirs = {}
@@ -73,7 +93,7 @@ class App:
                 root.update_idletasks()
 
         except FileNotFoundError:
-            messagebox.showwarning("FileNotFoundError", "Directory not found.")
+            self.show_hide_error(kwargs.get("origin_error"), "Diretory not found or non-existent", "show")
             return
 
         error_files = "\n".join(no_permission_files)
