@@ -1,9 +1,9 @@
 from time import sleep
 from tkinter import Button, Label, Entry, Tk, Frame, Checkbutton, IntVar
 from tkinter.ttk import Progressbar
-from app import App
+from file_organizer import FileOrganizer
 
-app = App()
+app = FileOrganizer()
 
 root = Tk()
 root.title("File Organizer")
@@ -56,7 +56,7 @@ nothing_to_scan_error.grid(column=2, row=8)
 nothing_to_scan_error.grid_remove()
 
 scan_error = Label(content, text="", fg="red")
-scan_error.grid(row=8, column=2)
+scan_error.grid(row=8, column=1, columnspan=2)
 scan_error.grid_remove()
 
 # Progress Bars
@@ -97,7 +97,7 @@ file_types = [[".pdf", ".docx", ".doc", ".odt", ".txt", ".rtf"],
               [".zip", ".rar", ".7z", ".tar", ".gz"],
               [".exe"],
               [".msi", ".apk", ".iso"]]
-scan_files_button = Button(content, text="Scan files", width=20, command=lambda: app.scan_files(origin=input_dir.get(), destiny=moving_to_label.get(), file_extensions=file_types, destinies=destinies, frame=checkboxes_frame, error_label=scan_error))
+scan_files_button = Button(content, text="Scan files", width=20, command=lambda: app.scan_files(origin=input_dir.get(), destiny=moving_to_label.get(), file_extensions=file_types, destinies=destinies, frame=checkboxes_frame, error_label=scan_error, load_bar=scan_bar, root=root))
 scan_files_button.grid(column=2, row=7, sticky="ns", padx=5, pady=5)
 
 # Checkboxes

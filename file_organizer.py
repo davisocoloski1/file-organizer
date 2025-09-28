@@ -1,13 +1,14 @@
 import os, shutil, pyperclip
 import time, threading
-from tkinter import messagebox, filedialog, END, IntVar, Checkbutton, Label
+from tkinter import messagebox, filedialog, END, IntVar, Checkbutton
 
 
-class App:
-    def show_hide_error(self, label, msg, type):
+class FileOrganizer:
+    def show_hide_error(self, label, msg, type, color="red"):
         if type == "show":
             if label:
                 label["text"] = msg
+                label["fg"] = color
                 label.grid()
 
         elif type == "hide":
@@ -49,6 +50,7 @@ class App:
         file_extensions = kwargs.get("file_extensions", "")
         destinies = kwargs.get("destinies", "")
         load_bar = kwargs.get("load_bar", "")
+        root = kwargs.get("root")
         frame = kwargs.get("frame")
         error_label = kwargs.get("error_label")
 
@@ -60,7 +62,7 @@ class App:
             total = len(files)
 
 
-            for file in files:
+            for idx, file in enumerate(files):
                 _, ext = os.path.splitext(file)
 
                 for widget in frame.winfo_children():
@@ -72,6 +74,14 @@ class App:
                             existing_extensions[i].append(ext)
                         break
 
+                load_bar["value"] = (idx / total) * 100
+                root.update_idletasks()
+
+            self.show_hide_error(error_label, "Scan Complete", "show", color="green")
+            time.sleep(2)
+            load_bar["value"] = 0
+            frame.grid()
+
             for i, extension_type in enumerate(existing_extensions):
                 if len(extension_type) != 0:
                     var = IntVar()
@@ -81,7 +91,10 @@ class App:
             print(directory, existing_extensions, sep='\n\n')
 
         except FileNotFoundError:
-            self.show_hide_error(error_label, "Diretory not found or \nnon-existent", "show")
+            self.show_hide_error(error_label, "Diretory not found or non-existent", "show")
+            frame.grid_remove()
+            for widget in frame.winfo_children():
+                widget.destroy()
 
     def organize_files(self, origin, destiny, root, progress, var1, var2, **kwargs):
         self.show_hide_error(kwargs.get("origin_error"), "", "hide")

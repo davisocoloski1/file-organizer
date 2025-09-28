@@ -90,7 +90,7 @@ This is the file scanning area, where you'll find the progress bar and the "Scan
 
 ![Scan Method Screenshot](assets/scan_files.png)
 
-The progress bar hasn't been configured yet, but clicking the button can cause two things to happen:
+Clicking the button can cause two things to happen:
 
 - 1 &rarr; If you haven't selected a source directory, an error message will appear below the button.
 
