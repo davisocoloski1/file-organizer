@@ -4,6 +4,10 @@ from tkinter import messagebox, filedialog, END, IntVar, Checkbutton
 
 
 class FileOrganizer:
+    def __init__(self, root):
+        self.vars_list = []
+        self.select_all_var = IntVar(master=root)
+
     def show_hide_error(self, label, msg, type, color="red"):
         if type == "show":
             if label:
@@ -25,6 +29,17 @@ class FileOrganizer:
             error_label["text"] = ""
             error_label.grid_remove()
 
+    def checkbox_state(self, vars_list):
+        states = []
+        for i, var in enumerate(vars_list):
+            states.append(var.get())
+        return states
+
+    def toggle_checkboxes(self):
+        state = self.select_all_var.get()
+        for var in self.vars_list:
+            var.set(state)
+
     def check_dir_exists(self, dir):
         if os.path.exists(dir):
             override = messagebox.askyesnocancel("Override files", f"Path {dir} already exists, do you want to override it?")
@@ -38,13 +53,6 @@ class FileOrganizer:
             os.makedirs(dir, exist_ok=True)
             return True
 
-    def checkboxes_state(self, var1, var2, dir):
-        if var1 == 1:
-            return True
-
-        if var2 == 1:
-            return self.check_dir_exists(dir)
-
     def scan_files(self, **kwargs):
         origin = kwargs.get("origin", "")
         file_extensions = kwargs.get("file_extensions", "")
@@ -56,6 +64,9 @@ class FileOrganizer:
 
         existing_extensions = [[] for _ in destinies]
 
+        for widget in frame.winfo_children():
+            widget.destroy()
+
         try:
             directory = os.path.expanduser(origin)
             files = os.listdir(directory)
@@ -64,9 +75,6 @@ class FileOrganizer:
 
             for idx, file in enumerate(files):
                 _, ext = os.path.splitext(file)
-
-                for widget in frame.winfo_children():
-                    widget.destroy()
 
                 for i, extensions in enumerate(file_extensions):
                     if ext in extensions:
@@ -82,13 +90,15 @@ class FileOrganizer:
             load_bar["value"] = 0
             frame.grid()
 
-            for i, extension_type in enumerate(existing_extensions):
-                if len(extension_type) != 0:
-                    var = IntVar()
-                    checkbox = Checkbutton(frame, text=destinies[i], variable=var)
-                    checkbox.grid(column=i // 2, row=i % 2, sticky="w")
+            self.vars_list = []
+            for i, _ in enumerate(destinies):
+                var = IntVar(value=0)
+                if existing_extensions[i]:
+                    Checkbutton(frame, text=destinies[i], variable=var).grid(column=i // 2, row=i % 2, sticky="w")
+                self.vars_list.append(var)
 
-            print(directory, existing_extensions, sep='\n\n')
+            select_all_checkbox = Checkbutton(frame, text="Select All", variable=self.select_all_var, command=lambda : self.toggle_checkboxes())
+            select_all_checkbox.grid(column=0, row=len(self.vars_list)+1, columnspan=4, sticky="we")
 
         except FileNotFoundError:
             self.show_hide_error(error_label, "Diretory not found or non-existent", "show")
@@ -96,7 +106,7 @@ class FileOrganizer:
             for widget in frame.winfo_children():
                 widget.destroy()
 
-    def organize_files(self, origin, destiny, root, progress, var1, var2, **kwargs):
+    def organize_files(self, origin, destiny, root, progress, var1, **kwargs):
         self.show_hide_error(kwargs.get("origin_error"), "", "hide")
         self.show_hide_error(kwargs.get("destiny_error"), "", "hide")
 
@@ -121,14 +131,25 @@ class FileOrganizer:
                 return
 
             valid_dirs = {}
-            for destiny_name in destinies:
+            for i, destiny_name in enumerate(destinies):
                 final = os.path.join(destiny, destiny_name)
-                state = self.checkboxes_state(var1.get(), var2.get(), final)
+                try:
+                    if self.vars_list[i].get() == 1:
+                        if var1.get() == 1:
+                            os.makedirs(final, exist_ok=True)
+                            state = True
+                        else:
+                            state = self.check_dir_exists(final)
+                        valid_dirs[destiny_name] = True
+                    else:
+                        valid_dirs[destiny_name] = False
 
-                if state:
-                    valid_dirs[destiny_name] = True
-                else:
-                    valid_dirs[destiny_name] = False
+                except IndexError:
+                    if var1.get() == 1:
+                        os.makedirs(final, exist_ok=True)
+                        state = True
+                    else:
+                        state = self.check_dir_exists(final)
 
             for i, file in enumerate(files, start=1):
                 path = os.path.join(directory, file)
@@ -149,8 +170,9 @@ class FileOrganizer:
             self.show_hide_error(kwargs.get("origin_error"), "Diretory not found or non-existent", "show")
             return
 
-        error_files = "\n".join(no_permission_files)
-        messagebox.showwarning("PermissionError", f"No permission to copy the following files: {error_files}")
+        except PermissionError:
+            error_files = "\n".join(no_permission_files)
+            messagebox.showwarning("PermissionError", f"No permission to copy the following files: {error_files}")
         time.sleep(3)
         progress["value"] = 0
         messagebox.showinfo("Sucess", "Transfer succesfully completed.")

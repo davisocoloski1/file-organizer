@@ -3,8 +3,6 @@ from tkinter import Button, Label, Entry, Tk, Frame, Checkbutton, IntVar
 from tkinter.ttk import Progressbar
 from file_organizer import FileOrganizer
 
-app = FileOrganizer()
-
 root = Tk()
 root.title("File Organizer")
 root.update_idletasks()
@@ -13,8 +11,11 @@ root.protocol("WM_DELETE_WINDOW", root.destroy)
 root.grid_rowconfigure(0, weight=1)
 root.grid_columnconfigure(0, weight=1)
 
+app = FileOrganizer(root)
+
 var1 = IntVar()
 var2 = IntVar()
+var3 = IntVar()
 
 # Frames
 content = Frame(root, bd=10)
@@ -82,7 +83,7 @@ search_origin_dir_btn.grid(column=2, row=1, padx=5, sticky="we")
 move_to_dir_btn = Button(content, text="Move to", command=lambda: app.open_file_dialog(label=moving_to_label))
 move_to_dir_btn.grid(column=2, row=3, pady=5, padx=5, sticky="we")
 
-organize_button = Button(content, text="Organize Files", command=lambda: app.organize_files(input_dir.get(), moving_to_label.get(), root, progress_bar, var1, var2, origin_error=origin_dir_error_label, destiny_error=destiny_dir_error_label))
+organize_button = Button(content, text="Organize Files", command=lambda: app.organize_files(input_dir.get(), moving_to_label.get(), root, progress_bar, origin_error=origin_dir_error_label, destiny_error=destiny_dir_error_label, var1=var1))
 organize_button.grid(column=1, row=11, columnspan=2, pady=5, sticky="we")
 
 copy_path_button = Button(content, text="Copy Path", width=20, command=lambda: app.copy_path(moving_to_label.get(), nothing_to_copy_error))
@@ -102,11 +103,11 @@ scan_files_button.grid(column=2, row=7, sticky="ns", padx=5, pady=5)
 
 # Checkboxes
 
-check_existing_files = Checkbutton(content, text="Check for\nexisting\nirectories", variable=var2)
-check_existing_files.grid(column=1, row=5, sticky="e")
+# check_existing_files = Checkbutton(content, text="Check for\nexisting\nirectories", variable=var2)
+# check_existing_files.grid(column=1, row=5, sticky="e")
 
-ignore_checkbox = Checkbutton(content, text="Auto ignore\nexisting\ndirectories", variable=var1)
-ignore_checkbox.grid(column=1, row=5, sticky="w")
+ignore_checkbox = Checkbutton(content, text="Auto ignore existing directories", variable=var1)
+ignore_checkbox.grid(column=1, row=5, rowspan=2, sticky="w")
 
 if __name__ == '__main__':
     root.mainloop()

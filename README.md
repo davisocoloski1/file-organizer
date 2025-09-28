@@ -74,7 +74,7 @@ Just like in the "Origin Directory" area, you can choose the destination directo
 
 ### Ignoring existing files
 
-In this area we have 2 checkboxes, the first will automatically ignore existing files and folders in your destination path, the second will show a message that says which folders already exist and asks whether or not the user wants to overwrite them.
+Clicking this will automatically ignore existing files and folders in your destination path
 
 ![Ignore files Screenshot](assets/ignore_img.png)
 
@@ -110,5 +110,3 @@ Finally, you can click the "Organize Files" button, which will locate the files 
 ### Note: the application may crash at times after clicking "Organize Files," so I recommend not clicking on the window until the transfer is complete.
 
 ---
-
-Possible improvement: let the user select which types of files to organize using checkboxes
