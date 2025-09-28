@@ -1,6 +1,7 @@
 import os, shutil, pyperclip
 import time, threading
-from tkinter import messagebox, filedialog, END, IntVar
+from tkinter import messagebox, filedialog, END, IntVar, Checkbutton, Label
+
 
 class App:
     def show_hide_error(self, label, msg, type):
@@ -42,6 +43,45 @@ class App:
 
         if var2 == 1:
             return self.check_dir_exists(dir)
+
+    def scan_files(self, **kwargs):
+        origin = kwargs.get("origin", "")
+        file_extensions = kwargs.get("file_extensions", "")
+        destinies = kwargs.get("destinies", "")
+        load_bar = kwargs.get("load_bar", "")
+        frame = kwargs.get("frame")
+        error_label = kwargs.get("error_label")
+
+        existing_extensions = [[] for _ in destinies]
+
+        try:
+            directory = os.path.expanduser(origin)
+            files = os.listdir(directory)
+            total = len(files)
+
+
+            for file in files:
+                _, ext = os.path.splitext(file)
+
+                for widget in frame.winfo_children():
+                    widget.destroy()
+
+                for i, extensions in enumerate(file_extensions):
+                    if ext in extensions:
+                        if ext not in existing_extensions[i]:
+                            existing_extensions[i].append(ext)
+                        break
+
+            for i, extension_type in enumerate(existing_extensions):
+                if len(extension_type) != 0:
+                    var = IntVar()
+                    checkbox = Checkbutton(frame, text=destinies[i], variable=var)
+                    checkbox.grid(column=i // 2, row=i % 2, sticky="w")
+
+            print(directory, existing_extensions, sep='\n\n')
+
+        except FileNotFoundError:
+            self.show_hide_error(error_label, "Diretory not found or \nnon-existent", "show")
 
     def organize_files(self, origin, destiny, root, progress, var1, var2, **kwargs):
         self.show_hide_error(kwargs.get("origin_error"), "", "hide")

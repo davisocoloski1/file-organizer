@@ -84,6 +84,21 @@ Next to the checkboxes is the "Copy Path" button, its function is to copy the de
 
 ![Copy Button Screenshot](assets/copy_button.png)
 
+### Scanning files
+
+This is the file scanning area, where you'll find the progress bar and the "Scan Files" button.
+
+![Scan Method Screenshot](assets/scan_files.png)
+
+The progress bar hasn't been configured yet, but clicking the button can cause two things to happen:
+
+- 1 &rarr; If you haven't selected a source directory, an error message will appear below the button.
+
+- 2 &rarr; If you've selected the source button, checkboxes will appear based on the file types in the selected directory. Selecting these checkboxes allows you to select which file types you want to move to the destination directory.
+Note: The ability to check which checkboxes are active or not has not yet been added.
+
+![Scan Method Screenshot with Checkboxes](assets/scan_files2.png)
+
 ### Organize files and progress bar
 
 Finally, you can click the "Organize Files" button, which will locate the files in the source directory and move them to the destination directory. Once you click it, the following events may occur:
