@@ -158,7 +158,7 @@ class FileOrganizer:
                     if file.endswith(tuple(extensions)):
                         if valid_dirs.get(destiny_name):
                             try:
-                                shutil.copy2(path, os.path.join(destiny, destiny_name))
+                                shutil.move(path, os.path.join(destiny, destiny_name))
                             except PermissionError:
                                 no_permission_files.append(path)
                         break
