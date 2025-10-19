@@ -40,9 +40,13 @@ class FileOrganizer:
         for var in self.vars_list:
             var.set(state)
 
+    # Checks if a destination directory already existis
     def check_dir_exists(self, dir):
-        if os.path.exists(dir):
-            override = messagebox.askyesnocancel("Override files", f"Path {dir} already exists, do you want to override it?")
+        if os.path.exists(dir.upper()):
+            override = messagebox.askyesnocancel(
+                "Override files",
+                f"Path {dir} already exists, do you want to override it?",
+            )
             if override:
                 return True
             if override is False:
@@ -72,7 +76,6 @@ class FileOrganizer:
             files = os.listdir(directory)
             total = len(files)
 
-
             for idx, file in enumerate(files):
                 _, ext = os.path.splitext(file)
 
@@ -94,14 +97,25 @@ class FileOrganizer:
             for i, _ in enumerate(destinies):
                 var = IntVar(value=0)
                 if existing_extensions[i]:
-                    Checkbutton(frame, text=destinies[i], variable=var).grid(column=i // 2, row=i % 2, sticky="w")
+                    Checkbutton(frame, text=destinies[i], variable=var).grid(
+                        column=i // 2, row=i % 2, sticky="w"
+                    )
                 self.vars_list.append(var)
 
-            select_all_checkbox = Checkbutton(frame, text="Select All", variable=self.select_all_var, command=lambda : self.toggle_checkboxes())
-            select_all_checkbox.grid(column=0, row=len(self.vars_list)+1, columnspan=4, sticky="we")
+            select_all_checkbox = Checkbutton(
+                frame,
+                text="Select All",
+                variable=self.select_all_var,
+                command=lambda: self.toggle_checkboxes(),
+            )
+            select_all_checkbox.grid(
+                column=0, row=len(self.vars_list) + 1, columnspan=4, sticky="we"
+            )
 
         except FileNotFoundError:
-            self.show_hide_error(error_label, "Diretory not found or non-existent", "show")
+            self.show_hide_error(
+                error_label, "Diretory not found or non-existent", "show"
+            )
             frame.grid_remove()
             for widget in frame.winfo_children():
                 widget.destroy()
@@ -113,21 +127,36 @@ class FileOrganizer:
         no_permission_files = []
         try:
             directory = os.path.expanduser(origin)
-            destinies = ["documents", "data_files", "images", "audios", "videos", "compressed_files", "executable", "others"]
-            file_types = [[".pdf", ".docx", ".doc", ".odt", ".txt", ".rtf"],
-                          [".csv", ".xls", ".xlsx", ".ods", ".tsv", ".json", ".xml"],
-                          [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".bmp"],
-                          [".mp3", ".wav", ".aac", ".ogg", ".flac"],
-                          [".mp4", ".mkv", ".avi", ".mov"],
-                          [".zip", ".rar", ".7z", ".tar", ".gz"],
-                          [".exe"],
-                          [".msi", ".apk", ".iso"]]
+            destinies = [
+                "Documents",
+                "Data_files",
+                "Images",
+                "Audios",
+                "Videos",
+                "Compressed_files",
+                "Executable",
+                "Others",
+            ]
+            file_types = [
+                [".pdf", ".docx", ".doc", ".odt", ".txt", ".rtf"],
+                [".csv", ".xls", ".xlsx", ".ods", ".tsv", ".json", ".xml"],
+                [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".bmp"],
+                [".mp3", ".wav", ".aac", ".ogg", ".flac"],
+                [".mp4", ".mkv", ".avi", ".mov"],
+                [".zip", ".rar", ".7z", ".tar", ".gz"],
+                [".exe"],
+                [".msi", ".apk", ".iso"],
+            ]
 
             files = os.listdir(directory)
             total = len(files)
 
             if len(destiny.strip()) == 0:
-                self.show_hide_error(kwargs.get("destiny_error"), "Diretory not found or non-existent", "show")
+                self.show_hide_error(
+                    kwargs.get("destiny_error"),
+                    "Diretory not found or non-existent",
+                    "show",
+                )
                 return
 
             valid_dirs = {}
@@ -167,12 +196,17 @@ class FileOrganizer:
                 root.update_idletasks()
 
         except FileNotFoundError:
-            self.show_hide_error(kwargs.get("origin_error"), "Diretory not found or non-existent", "show")
+            self.show_hide_error(
+                kwargs.get("origin_error"), "Diretory not found or non-existent", "show"
+            )
             return
 
         except PermissionError:
             error_files = "\n".join(no_permission_files)
-            messagebox.showwarning("PermissionError", f"No permission to copy the following files: {error_files}")
+            messagebox.showwarning(
+                "PermissionError",
+                f"No permission to copy the following files: {error_files}",
+            )
         time.sleep(3)
         progress["value"] = 0
         messagebox.showinfo("Sucess", "Transfer succesfully completed.")
@@ -191,5 +225,7 @@ class FileOrganizer:
             input_dir.insert(0, folder)
 
     def start_organize(self, origin, destiny):
-        t = threading.Thread(target=self.organize_files, args=(origin, destiny), daemon=True)
+        t = threading.Thread(
+            target=self.organize_files, args=(origin, destiny), daemon=True
+        )
         t.start()

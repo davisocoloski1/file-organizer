@@ -73,32 +73,82 @@ input_dir = Entry(content, bd=2, width=20, font=("Arial", 12))
 input_dir.grid(column=1, row=1, sticky="w")
 input_dir.focus_set()
 
-moving_to_label = Entry(content, bd=2, width=20, font=("Arial", 12), state="disabled", cursor="arrow")
+moving_to_label = Entry(
+    content, bd=2, width=20, font=("Arial", 12), state="disabled", cursor="arrow"
+)
 moving_to_label.grid(column=1, row=3, sticky="we", pady=5)
 
 # Buttons
-search_origin_dir_btn = Button(content, text="Search", command=lambda: app.open_file_dialog(input_dir))
+search_origin_dir_btn = Button(
+    content, text="Search", command=lambda: app.open_file_dialog(input_dir)
+)
 search_origin_dir_btn.grid(column=2, row=1, padx=5, sticky="we")
 
-move_to_dir_btn = Button(content, text="Move to", command=lambda: app.open_file_dialog(label=moving_to_label))
+move_to_dir_btn = Button(
+    content, text="Move to", command=lambda: app.open_file_dialog(label=moving_to_label)
+)
 move_to_dir_btn.grid(column=2, row=3, pady=5, padx=5, sticky="we")
 
-organize_button = Button(content, text="Organize Files", command=lambda: app.organize_files(input_dir.get(), moving_to_label.get(), root, progress_bar, origin_error=origin_dir_error_label, destiny_error=destiny_dir_error_label, var1=var1))
+organize_button = Button(
+    content,
+    text="Organize Files",
+    command=lambda: app.organize_files(
+        input_dir.get(),
+        moving_to_label.get(),
+        root,
+        progress_bar,
+        origin_error=origin_dir_error_label,
+        destiny_error=destiny_dir_error_label,
+        var1=var1,
+    ),
+)
 organize_button.grid(column=1, row=11, columnspan=2, pady=5, sticky="we")
 
-copy_path_button = Button(content, text="Copy Path", width=20, command=lambda: app.copy_path(moving_to_label.get(), nothing_to_copy_error))
+copy_path_button = Button(
+    content,
+    text="Copy Path",
+    width=20,
+    command=lambda: app.copy_path(moving_to_label.get(), nothing_to_copy_error),
+)
 copy_path_button.grid(column=2, row=5, padx=5, sticky="nswe")
 
-destinies = ["documents", "data_files", "images", "audios", "videos", "compressed_files", "executable", "others"]
-file_types = [[".pdf", ".docx", ".doc", ".odt", ".txt", ".rtf"],
-              [".csv", ".xls", ".xlsx", ".ods", ".tsv", ".json", ".xml"],
-              [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".bmp"],
-              [".mp3", ".wav", ".aac", ".ogg", ".flac"],
-              [".mp4", ".mkv", ".avi", ".mov"],
-              [".zip", ".rar", ".7z", ".tar", ".gz"],
-              [".exe"],
-              [".msi", ".apk", ".iso"]]
-scan_files_button = Button(content, text="Scan files", width=20, command=lambda: app.scan_files(origin=input_dir.get(), destiny=moving_to_label.get(), file_extensions=file_types, destinies=destinies, frame=checkboxes_frame, error_label=scan_error, load_bar=scan_bar, root=root))
+# Set up destination directories
+destinies = [
+    "Documents",
+    "Data_files",
+    "Images",
+    "Audios",
+    "Videos",
+    "Compressed_files",
+    "Executable",
+    "Others",
+]
+# File types that will be organized
+file_types = [
+    [".pdf", ".docx", ".doc", ".odt", ".txt", ".rtf"],
+    [".csv", ".xls", ".xlsx", ".ods", ".tsv", ".json", ".xml"],
+    [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".bmp"],
+    [".mp3", ".wav", ".aac", ".ogg", ".flac"],
+    [".mp4", ".mkv", ".avi", ".mov"],
+    [".zip", ".rar", ".7z", ".tar", ".gz"],
+    [".exe"],
+    [".msi", ".apk", ".iso"],
+]
+scan_files_button = Button(
+    content,
+    text="Scan files",
+    width=20,
+    command=lambda: app.scan_files(
+        origin=input_dir.get(),
+        destiny=moving_to_label.get(),
+        file_extensions=file_types,
+        destinies=destinies,
+        frame=checkboxes_frame,
+        error_label=scan_error,
+        load_bar=scan_bar,
+        root=root,
+    ),
+)
 scan_files_button.grid(column=2, row=7, sticky="ns", padx=5, pady=5)
 
 # Checkboxes
@@ -106,8 +156,10 @@ scan_files_button.grid(column=2, row=7, sticky="ns", padx=5, pady=5)
 # check_existing_files = Checkbutton(content, text="Check for\nexisting\nirectories", variable=var2)
 # check_existing_files.grid(column=1, row=5, sticky="e")
 
-ignore_checkbox = Checkbutton(content, text="Auto ignore existing directories", variable=var1)
+ignore_checkbox = Checkbutton(
+    content, text="Auto ignore existing directories", variable=var1
+)
 ignore_checkbox.grid(column=1, row=5, rowspan=2, sticky="w")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     root.mainloop()
